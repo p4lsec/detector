@@ -1,11 +1,13 @@
 import os
 import logging
+import time
+
+from typing import Generator
+
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy import create_engine
 from sqlalchemy.exc import OperationalError
 from sqlalchemy.orm import Session
-import time
-from typing import Generator
 
 from . import models, crud, schemas, database, utils
 
