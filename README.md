@@ -48,4 +48,14 @@ curl -X GET "http://localhost:8000/search?ip=176.9.38.121"
 
 ## Usage
 
-A server is deployed at `http://44.197.181.191` for testing purposes: 
+A server is deployed at `http://44.197.181.191` for testing purposes
+
+## Testing
+
+These commands should allow you to verify an IP address is a Tor exit node, delete it, then verify the IP is no longer on the list. 
+
+```
+curl -X GET "http://44.197.181.191/search?ip=185.100.87.141"
+curl -X DELETE "http://44.197.181.191/delete?ip=185.100.87.141"
+curl -X GET "http://44.197.181.191/search?ip=185.100.87.141"
+```
