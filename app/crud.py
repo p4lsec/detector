@@ -38,15 +38,15 @@ def get_tor_exit_nodes(db: Session):
     except Exception:
         return {"ips": []}
 
-# def delete_ip(db: Session, ip: str):
-#     try:
-#         node = db.query(models.TorExitNode).filter(models.TorExitNode.ip == ip).first()
-#         if node:
-#             db.delete(node)
-#             db.commit()
-#             log.info(f"Successfully deleted IP {ip} from Tor exit nodes")
-#         else:
-#             log.warning(f"Attempted to delete non-existent IP {ip}")
-#     except Exception:
-#         log.exception(f"Error deleting IP {ip}")
-#         db.rollback()
+def delete_ip(db: Session, ip: str):
+    try:
+        node = db.query(models.TorExitNode).filter(models.TorExitNode.ip == ip).first()
+        if node:
+            db.delete(node)
+            db.commit()
+            log.info(f"Successfully deleted IP {ip} from Tor exit nodes")
+        else:
+            log.warning(f"Attempted to delete non-existent IP {ip}")
+    except Exception:
+        log.exception(f"Error deleting IP {ip}")
+        db.rollback()
