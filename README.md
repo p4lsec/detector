@@ -1,6 +1,6 @@
 # DetecTor
 
-This project provides an API for detecting if an IP address is a Tor exit node, retrieving the list of Tor exit nodes, and deleting specific IP addresses from the list. The application is built using FastAPI, PostgreSQL, and Docker.
+DetectTor provides an API for determining if an IP address is a Tor exit node, and retrieving a list of all known Tor exit nodes. The application is built using FastAPI, PostgreSQL, and Docker. The application refreshes the list of IPs on a configurable basis, and persists reboots and service interruptions. 
 
 ## Setup Instructions
 
@@ -9,25 +9,29 @@ This project provides an API for detecting if an IP address is a Tor exit node, 
 - Docker
 - Docker Compose
 
-### Environment Variables
+### Installation and Configuration
 
-Create a `.env` file in the root directory with the following content:
+1. Clone the repo:
 
-```env
-POSTGRES_USER=user
-POSTGRES_PASSWORD=password
-POSTGRES_DB=tor_db
+```
+git clone https://github.com/p4lsec/detector.git
 ```
 
-## Running the Application
+2. Copy over a `.env` file in the root directory:
 
-	1.	Build and start the application using Docker Compose:
+```
+cp .env.example .env
+```
 
-    ```
+3. Update the DB values in your .env
+
+4. Build and start the application using Docker Compose:
+
+    ```sh
     docker-compose up --build
     ```
 
-  	2.	The API will be available at http://localhost:8000.
+5.	The API will be available at http://localhost:8000.
 
 ## API Endpoints
 
@@ -42,3 +46,6 @@ curl -X GET "http://localhost:8000/search?ip=176.9.38.121"
 
 ```
 
+## Usage
+
+A server is deployed at http://44.197.181.191 for testing purposes: 
