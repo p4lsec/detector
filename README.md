@@ -48,4 +48,4 @@ curl -X GET "http://localhost:8000/search?ip=176.9.38.121"
 
 ## Usage
 
-A server is deployed at http://44.197.181.191 for testing purposes: 
+A server is deployed at `http://44.197.181.191` for testing purposes: 
