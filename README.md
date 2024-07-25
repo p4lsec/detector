@@ -35,20 +35,21 @@ cp .env.example .env
 
 ## API Endpoints
 
-- GET /search?ip={ip}: Check if the given IP address is a Tor exit node.
-- GET /list: Retrieve the full list of Tor exit nodes.
+- `GET /search?ip={ip}`: Check if the given IP address is a Tor exit node.
+- `GET /list`: Retrieve the full list of Tor exit nodes.
+- `DELETE /delete?ip={ip}`: Deletes an IP address from the list. 
 
 ## Examples
 
 ```
 curl -X GET "http://localhost:8000/list"
 curl -X GET "http://localhost:8000/search?ip=176.9.38.121"
-
+curl -X DELETE "http://localhost:8000/delete?ip=185.100.87.141"
 ```
 
 ## Usage
 
-A server is deployed at `http://44.197.181.191` for testing purposes
+A server is deployed at `http://44.197.181.191` for testing purposes. 
 
 ## Testing
 
