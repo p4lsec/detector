@@ -5,6 +5,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.exc import OperationalError
 from sqlalchemy.orm import Session
 import time
+from typing import Generator
 
 from . import models, crud, schemas, database, utils
 
@@ -21,8 +22,13 @@ models.Base.metadata.create_all(bind=database.engine)
 utils.scheduler.add_job(utils.refresh_tor_exit_nodes, 'interval', hours=int(os.getenv('REFRESH_INTERVAL', 24)))
 utils.scheduler.start()
 
-# Dependency
-def get_db():
+def get_db() -> Generator[Session, None, None]:
+    """
+    Dependency to get the database session.
+    
+    Yields:
+        Generator[Session, None, None]: The database session.
+    """
     db = database.SessionLocal()
     try:
         yield db
@@ -30,7 +36,10 @@ def get_db():
         db.close()
 
 @app.on_event("startup")
-async def startup_event():
+async def startup_event() -> None:
+    """
+    Event handler for application startup.
+    """
     log.info("Starting up the DetecTor API")
     max_retries = 5
     retry_delay = 5  # seconds
@@ -55,13 +64,26 @@ async def startup_event():
     log.info("Initial Tor exit nodes refresh completed")
 
 @app.on_event("shutdown")
-async def shutdown_event():
+async def shutdown_event() -> None:
+    """
+    Event handler for application shutdown.
+    """
     log.info("Shutting down the DetecTor API")
     utils.scheduler.shutdown()
     log.info("Background scheduler shut down")
 
 @app.get("/search", response_model=bool)
-async def search_ip(ip: str, db: Session = Depends(get_db)):
+async def search_ip(ip: str, db: Session = Depends(get_db)) -> bool:
+    """
+    Search for an IP address to determine if it is a Tor exit node.
+    
+    Args:
+        ip (str): The IP address to search.
+        db (Session): The database session.
+
+    Returns:
+        bool: True if the IP is a Tor exit node, False otherwise.
+    """
     log.info(f"Searching for IP: {ip}")
     try:
         result = crud.search_ip(db, ip)
@@ -72,7 +94,16 @@ async def search_ip(ip: str, db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail="Internal server error")
 
 @app.get("/list", response_model=schemas.IPList)
-async def get_tor_exit_nodes(db: Session = Depends(get_db)):
+async def get_tor_exit_nodes(db: Session = Depends(get_db)) -> schemas.IPList:
+    """
+    Retrieve the full list of Tor exit nodes.
+    
+    Args:
+        db (Session): The database session.
+
+    Returns:
+        schemas.IPList: The list of Tor exit nodes.
+    """
     log.info("Retrieving list of Tor exit nodes")
     try:
         result = crud.get_tor_exit_nodes(db)
@@ -83,7 +114,17 @@ async def get_tor_exit_nodes(db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail="Internal server error")
 
 @app.delete("/delete")
-async def delete_ip(ip: str, db: Session = Depends(get_db)):
+async def delete_ip(ip: str, db: Session = Depends(get_db)) -> dict:
+    """
+    Delete an IP address from the list of Tor exit nodes.
+    
+    Args:
+        ip (str): The IP address to delete.
+        db (Session): The database session.
+
+    Returns:
+        dict: A message indicating the result of the deletion.
+    """
     log.info(f"Attempting to delete IP: {ip}")
     try:
         crud.delete_ip(db, ip)
@@ -94,7 +135,13 @@ async def delete_ip(ip: str, db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail="Internal server error")
 
 @app.get("/health")
-async def health_check():
+async def health_check() -> dict:
+    """
+    Health check endpoint to verify the API status.
+
+    Returns:
+        dict: The health status of the API.
+    """
     return {"status": "healthy"}
 
 if __name__ == "__main__":
